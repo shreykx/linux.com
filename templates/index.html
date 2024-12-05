@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic HTML Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+<body class="bg-black">
+    <div class="px-4 py-2 flex items-center justify-center">
+        <input id="centre" class="px-4 py-2 bg-black text-white border-b-4 border-0 border-b-gray-400 focus:border-b-blue-600 text-4xl font-bold outline-none" onkeypress="checkEnter(event)"></input>
+    </div>
+    <div class="flex items-center justify-center p-1">
+        <div class="p-1">
+            <span id="fill_out"></span>
+        </div>
+    </div>
+    <script>
+        function checkEnter(event) {
+            if (event.key === 'Enter') {
+                const inputValue = document.getElementById('centre').value;
+                executeCommand(inputValue);
+            }
+        }
+
+        function executeCommand(command) {
+            // Placeholder for command execution logic
+            document.getElementById('fill_out').innerHTML = `<span class='text-blue-600 font-bold'>Waiting...</span> <span class='bg-gray-300 px-4 py-2 rounded-full'>${command}</span>`;
+            // Here you can add the logic to send the command to the server
+            fetch('/api/run', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ command: command })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('fill_out').innerHTML = `<span class='text-blue-600 font-bold'>${data.output}</span>`;
+            })
+            .catch(error => {
+                document.getElementById('fill_out').innerHTML = `<span class='text-red-600 font-bold'>Error:</span> <span class='bg-gray-300 px-4 py-2 rounded-full'>${error}</span>`;
+            });
+        }
+    </script>
+</body>
+</html>
